@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Snake X — Arcade Edition</title>
+    <meta name="description" content="A professional, feature-rich arcade Snake game with custom skins, power-ups, levels, high scores, and PWA support." />
+    <meta property="og:title" content="Snake X — Arcade Edition" />
+    <meta property="og:description" content="A professional, feature-rich arcade Snake game with custom skins, power-ups, levels, high scores, and PWA support." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./assets/manifest-B1N52TTr.json" />
+    <meta name="theme-color" content="#090d16" />
+
+    <!-- Apple PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="SnakeX" />
+    <link rel="apple-touch-icon" href="./assets/icons/icon-192.png" />
+
+    <!-- Android/Chrome -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="SnakeX" />
+    <script type="module" crossorigin src="./assets/index-Bla-lisd.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Bs1E1E8D.css">
+  
+    <style>
+      .mobile-dpad{display:none;flex-direction:column;align-items:center;gap:8px;margin:14px auto 0}.mobile-dpad-row{display:flex;gap:8px}.mobile-dpad button{width:56px;height:50px;border:1px solid #2b7a4b;border-radius:10px;background:#0e2a18;color:#c8e5d6;font-size:20px;font-weight:900;touch-action:manipulation;user-select:none}.mobile-dpad button:active{transform:scale(.94);background:#1a4030}@media(max-width:767px){.mobile-dpad{display:flex}}
+    </style>
+</head>
+  <body class="bg-slate-950 text-slate-100 overflow-x-hidden selection:bg-emerald-500 selection:text-slate-950">
+    <div id="root"></div>
+
+  
+    <script>
+      (function(){
+        function addDpad(){
+          var canvas=document.querySelector("canvas");
+          if(!canvas || document.querySelector(".mobile-dpad")) return !!canvas;
+          var wrap=canvas.parentElement;
+          if(!wrap) return false;
+          var pad=document.createElement("div");
+          pad.className="mobile-dpad";
+          pad.innerHTML='<button data-key="ArrowUp" aria-label="Up">▲</button><div class="mobile-dpad-row"><button data-key="ArrowLeft" aria-label="Left">◀</button><button data-key="ArrowDown" aria-label="Down">▼</button><button data-key="ArrowRight" aria-label="Right">▶</button></div>';
+          wrap.insertAdjacentElement("afterend",pad);
+          pad.querySelectorAll("button").forEach(function(btn){
+            btn.addEventListener("pointerdown",function(e){
+              e.preventDefault();
+              window.dispatchEvent(new KeyboardEvent("keydown",{key:btn.dataset.key,bubbles:true}));
+            });
+          });
+          return true;
+        }
+        var tries=0;
+        var timer=setInterval(function(){if(addDpad() || ++tries>100) clearInterval(timer)},100);
+      })();
+    </script>
+
+  </body>
+</html>
