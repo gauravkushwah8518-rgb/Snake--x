@@ -1,19 +1,25 @@
-# Snake X 3D — Arcade Edition
+# Snake X — Arcade Edition
 
-A modern **3D isometric Snake game** — vanilla JavaScript, zero dependencies, full PWA support (installable + offline).
+A modern **Snake game** with a clean flat 2D board — vanilla JavaScript, zero dependencies, full PWA support (installable + offline).
 
-![version](https://img.shields.io/badge/version-2.0.0-emerald)
+![version](https://img.shields.io/badge/version-2.1.3-emerald)
 
 ## Features
 
-- 🎲 **3D isometric board** with depth-shaded cubes, glow effects, particles and screen shake
+- 🎯 **Clean 2D checkerboard board** — rounded snake with a glowing head, glossy apple, neon rim
+- 🌌 **Animated starfield background** — subtle twinkling stars keep the game alive
 - ⚡ **Power-ups** — Speed, Slow, Shield (saves you once), Magnet (pulls food toward you)
 - 📈 **Levels** — every 100 points the snake gets faster
 - 🎨 **7 snake skins** unlocked by your best score
 - 🏆 **Top-10 high scores** (saved locally)
-- ⚙️ **Settings** — sound, wall collision (or wrap-around), difficulty
+- ⚙️ **Settings** — sound, wall collision (or wrap-around), difficulty, on-screen keys toggle
 - 🔊 **Synthesized sound** via WebAudio — no audio files to download
-- 📱 **Mobile ready** — swipe controls + on-screen D-Pad, crisp on high-DPI screens
+- 💥 **Juice** — particle bursts, floating score popups, screen shake, countdown
+- 🐍 **Game Over character** — a dead snake with X eyes drops onto the panel
+- 🎮 **On-screen D-Pad always available** — works with mouse clicks and touch, toggleable in settings
+- 📊 **Colorful HUD scoreboard** — Score (green), Best (gold), Level (cyan)
+- 📱 **Mobile ready** — swipe controls + D-Pad, crisp on high-DPI screens
+- ⏸️ **Auto-pause** when you switch tabs
 - 📴 **PWA** — installable, offline-playable
 
 ## Controls
@@ -22,6 +28,8 @@ A modern **3D isometric Snake game** — vanilla JavaScript, zero dependencies, 
 |---|---|---|
 | Move | Arrow keys / WASD | Swipe or D-Pad |
 | Pause | Space / Esc | Pause button |
+
+The D-Pad below the board works everywhere — click it with the mouse or tap it on mobile.
 
 ## Run locally
 
