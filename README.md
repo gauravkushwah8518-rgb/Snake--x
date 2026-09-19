@@ -1,64 +1,55 @@
-# Snake X — Arcade Edition
+# Snake X 3D — Arcade Edition
 
-Snake X is a modern arcade-style Snake game with a responsive interface, power-ups, levels, custom skins, high scores, pause/restart controls, touch gestures, mobile controls, and Progressive Web App support.
+A modern **3D isometric Snake game** — vanilla JavaScript, zero dependencies, full PWA support (installable + offline).
+
+![version](https://img.shields.io/badge/version-2.0.0-emerald)
 
 ## Features
 
-- Classic Snake gameplay
-- Keyboard controls with Arrow keys and WASD
-- Mobile D-Pad controls
-- Swipe controls on touch devices
-- Multiple power-ups
-- Levels and increasing difficulty
-- High-score support
-- Custom snake skins
-- Pause and restart controls
-- Responsive desktop and mobile layout
-- PWA support for installable and offline-friendly gameplay
+- 🎲 **3D isometric board** with depth-shaded cubes, glow effects, particles and screen shake
+- ⚡ **Power-ups** — Speed, Slow, Shield (saves you once), Magnet (pulls food toward you)
+- 📈 **Levels** — every 100 points the snake gets faster
+- 🎨 **7 snake skins** unlocked by your best score
+- 🏆 **Top-10 high scores** (saved locally)
+- ⚙️ **Settings** — sound, wall collision (or wrap-around), difficulty
+- 🔊 **Synthesized sound** via WebAudio — no audio files to download
+- 📱 **Mobile ready** — swipe controls + on-screen D-Pad, crisp on high-DPI screens
+- 📴 **PWA** — installable, offline-playable
 
 ## Controls
 
-### Desktop
-- Arrow keys or WASD — Move
-- Space — Pause/Resume or restart after Game Over
+| Action | Desktop | Mobile |
+|---|---|---|
+| Move | Arrow keys / WASD | Swipe or D-Pad |
+| Pause | Space / Esc | Pause button |
 
-### Mobile
-- Use the on-screen D-Pad
-- Swipe on the game board to move
+## Run locally
 
-## Project Structure
-
-```text
-Snake-X/
-├── index.html
-├── manifest.json
-├── sw.js
-└── assets/
-    ├── index-Bla-lisd.js
-    ├── index-Bs1E1E8D.css
-    ├── manifest-B1N52TTr.json
-    └── icons/
-        ├── icon-192.png
-        └── icon-512.png
-```
-
-## Run Locally
-
-Because this project uses PWA features, run it through a local web server instead of opening `index.html` directly.
-
-For example, with Python:
+Any static server works:
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Then open `http://localhost:8000` in your browser.
+Then open <http://localhost:8000>. (A server is needed for the service worker; opening `index.html` directly disables offline mode.)
+
+## Project structure
+
+```text
+Snake-X/
+├── index.html        # App shell + screens
+├── manifest.json     # PWA manifest
+├── sw.js             # Service worker (offline)
+└── assets/
+    ├── game.js       # The whole game (vanilla JS)
+    ├── style.css     # UI styling
+    └── icons/        # PWA icons
+```
 
 ## Deployment
 
-The project can be deployed as a static website on services such as Netlify or GitHub Pages. Upload the project files with `index.html` at the root of the published folder.
+Deploy as a static site to Netlify, GitHub Pages, or any web host — keep `index.html` at the root of the published folder.
 
 ## Author
 
 Gaurav Kushwah
-# Snake--x

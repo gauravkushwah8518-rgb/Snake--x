@@ -2,61 +2,187 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Snake X — Arcade Edition</title>
-    <meta name="description" content="A professional, feature-rich arcade Snake game with custom skins, power-ups, levels, high scores, and PWA support." />
-    <meta property="og:title" content="Snake X — Arcade Edition" />
-    <meta property="og:description" content="A professional, feature-rich arcade Snake game with custom skins, power-ups, levels, high scores, and PWA support." />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="description" content="A polished arcade Snake game with power-ups, levels, skins, high scores, and full PWA support. Playable offline." />
 
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="./assets/manifest-B1N52TTr.json" />
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="Snake X — Arcade Edition" />
+    <meta property="og:description" content="A polished arcade Snake game with power-ups, levels, skins, high scores, and full PWA support." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="./assets/icons/icon-512.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Snake X — Arcade Edition" />
+    <meta name="twitter:description" content="A polished arcade Snake game with power-ups, levels, skins, high scores, and PWA support." />
+    <meta name="twitter:image" content="./assets/icons/icon-512.png" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="./manifest.json" />
     <meta name="theme-color" content="#090d16" />
 
-    <!-- Apple PWA Meta Tags -->
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="./assets/icons/icon-192.png" />
+
+    <!-- Apple / Android PWA -->
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="SnakeX" />
-    <link rel="apple-touch-icon" href="./assets/icons/icon-192.png" />
-
-    <!-- Android/Chrome -->
-    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="application-name" content="SnakeX" />
-    <script type="module" crossorigin src="./assets/index-Bla-lisd.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-Bs1E1E8D.css">
-  
-    <style>
-      .mobile-dpad{display:none;flex-direction:column;align-items:center;gap:8px;margin:14px auto 0}.mobile-dpad-row{display:flex;gap:8px}.mobile-dpad button{width:56px;height:50px;border:1px solid #2b7a4b;border-radius:10px;background:#0e2a18;color:#c8e5d6;font-size:20px;font-weight:900;touch-action:manipulation;user-select:none}.mobile-dpad button:active{transform:scale(.94);background:#1a4030}@media(max-width:767px){.mobile-dpad{display:flex}}
-    </style>
-</head>
-  <body class="bg-slate-950 text-slate-100 overflow-x-hidden selection:bg-emerald-500 selection:text-slate-950">
-    <div id="root"></div>
 
-  
-    <script>
-      (function(){
-        function addDpad(){
-          var canvas=document.querySelector("canvas");
-          if(!canvas || document.querySelector(".mobile-dpad")) return !!canvas;
-          var wrap=canvas.parentElement;
-          if(!wrap) return false;
-          var pad=document.createElement("div");
-          pad.className="mobile-dpad";
-          pad.innerHTML='<button data-key="ArrowUp" aria-label="Up">▲</button><div class="mobile-dpad-row"><button data-key="ArrowLeft" aria-label="Left">◀</button><button data-key="ArrowDown" aria-label="Down">▼</button><button data-key="ArrowRight" aria-label="Right">▶</button></div>';
-          wrap.insertAdjacentElement("afterend",pad);
-          pad.querySelectorAll("button").forEach(function(btn){
-            btn.addEventListener("pointerdown",function(e){
-              e.preventDefault();
-              window.dispatchEvent(new KeyboardEvent("keydown",{key:btn.dataset.key,bubbles:true}));
-            });
-          });
-          return true;
-        }
-        var tries=0;
-        var timer=setInterval(function(){if(addDpad() || ++tries>100) clearInterval(timer)},100);
-      })();
-    </script>
+    <link rel="stylesheet" href="./assets/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- ===== HUD ===== -->
+      <header id="hud" class="hidden">
+        <div class="hud-stats">
+          <div class="stat"><span class="stat-label">Score</span><span id="stat-score" class="stat-value green">0</span></div>
+          <div class="stat-sep"></div>
+          <div class="stat"><span class="stat-label">Best</span><span id="stat-best" class="stat-value gold">0</span></div>
+          <div class="stat-sep"></div>
+          <div class="stat"><span class="stat-label">Level</span><span id="stat-level" class="stat-value cyan">1</span></div>
+        </div>
+        <button id="btn-pause" class="btn btn-ghost" aria-label="Pause game">⏸ PAUSE</button>
+      </header>
 
+      <!-- ===== Active power-ups ===== -->
+      <div id="powerup-bar" class="hidden" aria-live="polite"></div>
+
+      <!-- ===== Game canvas ===== -->
+      <main id="game-wrap" class="hidden">
+        <canvas id="game" width="540" height="540" aria-label="Snake game board"></canvas>
+        <p id="controls-hint">Arrow keys / WASD · Space to pause · Swipe on mobile</p>
+      </main>
+
+      <!-- ===== Mobile D-Pad ===== -->
+      <div id="dpad" class="hidden" aria-label="Mobile controls">
+        <button class="dpad-btn" data-dir="up" aria-label="Up">▲</button>
+        <div class="dpad-row">
+          <button class="dpad-btn" data-dir="left" aria-label="Left">◀</button>
+          <button class="dpad-btn" data-dir="down" aria-label="Down">▼</button>
+          <button class="dpad-btn" data-dir="right" aria-label="Right">▶</button>
+        </div>
+      </div>
+
+      <!-- ===== Menu screen ===== -->
+      <section id="screen-menu" class="screen">
+        <div class="logo">
+          <span class="logo-emoji">🐍</span>
+          <h1>SNAKE <span class="accent">X</span></h1>
+          <p class="tagline">EAT • GROW • SURVIVE</p>
+        </div>
+        <button id="btn-start" class="btn btn-primary">▶ START GAME</button>
+        <div class="menu-grid">
+          <button class="menu-card" data-action="scores"><span class="menu-icon cyan">🏆</span><h3>HIGH SCORES</h3><p>Your best runs</p></button>
+          <button class="menu-card" data-action="skins"><span class="menu-icon purple">🎨</span><h3>SNAKE SKINS</h3><p>Unlock cool skins</p></button>
+          <button class="menu-card" data-action="settings"><span class="menu-icon orange">⚙️</span><h3>SETTINGS</h3><p>Sound, walls &amp; difficulty</p></button>
+          <button class="menu-card" data-action="howto"><span class="menu-icon red">❓</span><h3>HOW TO PLAY</h3><p>Learn the rules</p></button>
+        </div>
+        <button id="btn-install" class="btn btn-ghost small hidden">⬇ INSTALL APP</button>
+        <footer>BEAT YOUR HIGH SCORE • BECOME THE LONGEST SNAKE</footer>
+      </section>
+
+      <!-- ===== Countdown ===== -->
+      <section id="screen-countdown" class="screen overlay hidden"><div id="countdown-num">3</div></section>
+
+      <!-- ===== Pause ===== -->
+      <section id="screen-pause" class="screen overlay hidden">
+        <div class="panel">
+          <div class="panel-topline"></div>
+          <h2>GAME PAUSED</h2>
+          <p class="muted">Take a breather</p>
+          <button id="btn-resume" class="btn btn-primary">▶ RESUME</button>
+          <button id="btn-restart" class="btn btn-outline">⟳ RESTART</button>
+          <button id="btn-quit" class="btn btn-ghost">⌂ MAIN MENU</button>
+        </div>
+      </section>
+
+      <!-- ===== Game Over ===== -->
+      <section id="screen-gameover" class="screen overlay hidden">
+        <div class="panel">
+          <div class="panel-topline red"></div>
+          <div class="dead-snake" aria-hidden="true">
+            <svg viewBox="0 0 220 96" width="190" height="82">
+              <path d="M14 66 C 42 18, 74 84, 108 56 S 168 26, 196 50" fill="none" stroke="#0c5c32" stroke-width="17" stroke-linecap="round"/>
+              <path d="M14 66 C 42 18, 74 84, 108 56 S 168 26, 196 50" fill="none" stroke="#34d399" stroke-width="11" stroke-linecap="round"/>
+              <circle cx="199" cy="47" r="17" fill="#4adf7a"/>
+              <circle cx="199" cy="47" r="17" fill="none" stroke="#0c5c32" stroke-width="2.5"/>
+              <path d="M188 40 l7 7 m0 -7 l-7 7 M203 40 l7 7 m0 -7 l-7 7" stroke="#0b3b22" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M204 60 q -1 8 4 10 M204 60 q 5 5 9 3" stroke="#ff6b8a" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+              <path d="M30 24 l4 0 m-2 -2 l0 4 M64 12 l5 0 m-2.5 -2.5 l0 5 M120 88 l4 0 m-2 -2 l0 4" stroke="#ffd600" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+            </svg>
+          </div>
+          <h2 id="go-title">GAME OVER</h2>
+          <div class="go-stats">
+            <div><span class="muted">SCORE</span><strong id="go-score">0</strong></div>
+            <div><span class="muted">LEVEL</span><strong id="go-level">1</strong></div>
+            <div><span class="muted">LENGTH</span><strong id="go-length">3</strong></div>
+            <div><span class="muted">TIME</span><strong id="go-time">00:00</strong></div>
+          </div>
+          <p id="go-newbest" class="newbest hidden">★ NEW HIGH SCORE ★</p>
+          <button id="btn-play-again" class="btn btn-primary">⟳ PLAY AGAIN</button>
+          <button id="btn-menu" class="btn btn-ghost">⌂ MAIN MENU</button>
+        </div>
+      </section>
+
+      <!-- ===== High Scores ===== -->
+      <section id="screen-scores" class="screen overlay hidden">
+        <div class="panel">
+          <div class="panel-topline yellow"></div>
+          <h2>HIGH SCORES</h2>
+          <ol id="score-list" class="score-list"></ol>
+          <button class="btn btn-outline" data-close>← BACK</button>
+        </div>
+      </section>
+
+      <!-- ===== Skins ===== -->
+      <section id="screen-skins" class="screen overlay hidden">
+        <div class="panel">
+          <div class="panel-topline purple"></div>
+          <h2>SNAKE SKINS</h2>
+          <div id="skin-grid" class="skin-grid"></div>
+          <button class="btn btn-outline" data-close>← BACK</button>
+        </div>
+      </section>
+
+      <!-- ===== Settings ===== -->
+      <section id="screen-settings" class="screen overlay hidden">
+        <div class="panel">
+          <div class="panel-topline orange"></div>
+          <h2>SETTINGS</h2>
+          <label class="setting-row"><span>Sound effects</span><input type="checkbox" id="set-sound" checked /></label>
+          <label class="setting-row"><span>Wall collision (off = wrap around)</span><input type="checkbox" id="set-walls" checked /></label>
+          <label class="setting-row"><span>On-screen keys (D-Pad)</span><input type="checkbox" id="set-dpad" checked /></label>
+          <label class="setting-row"><span>Difficulty</span>
+            <select id="set-difficulty">
+              <option value="easy">Easy</option>
+              <option value="normal" selected>Normal</option>
+              <option value="hard">Hard</option>
+            </select>
+          </label>
+          <button class="btn btn-outline" data-close>← BACK</button>
+        </div>
+      </section>
+
+      <!-- ===== How to play ===== -->
+      <section id="screen-howto" class="screen overlay hidden">
+        <div class="panel">
+          <div class="panel-topline red"></div>
+          <h2>HOW TO PLAY</h2>
+          <ul class="howto">
+            <li>🍎 Eat food to grow and score points.</li>
+            <li>⚡ Power-ups: <b>Speed</b>, <b>Slow</b>, <b>Shield</b>, <b>Magnet</b>.</li>
+            <li>⬆ Every 100 points = next level = faster snake.</li>
+            <li>🧱 Walls kill you — unless Shield is active or walls are off.</li>
+            <li>⌨ Arrow keys / WASD to move, Space to pause. Swipe on mobile.</li>
+          </ul>
+          <button class="btn btn-outline" data-close>← BACK</button>
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="./assets/game.js"></script>
   </body>
 </html>
